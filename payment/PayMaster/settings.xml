@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <name>
+        PayMaster
+    </name>
+    <settings>
+        <variable>merchant_id</variable>
+        <name>Идентификатор продавца</name>
+    </settings>
+    <settings>
+        <variable>secret_key</variable>
+        <name>Секретный ключ</name>
+    </settings>
+    <settings>
+        <variable>paymaster_sign_method</variable>
+        <name>Тип подписи для запроса (HASH метод)</name>
+        <options>
+            <name>sha256</name>
+            <value>sha256</value>
+        </options>
+        <options>
+            <name>md5</name>
+            <value>md5</value>
+        </options>
+        <options>
+            <name>sha1</name>
+            <value>sha1</value>
+        </options>
+    </settings>
+    <settings>
+        <variable>paymaster_currency</variable>
+        <name>Код валюты для расчета по ISO (RUB для рублей)</name>
+    </settings>
+    <settings>
+        <variable>paymaster_payment_detail</variable>
+        <name>Детали заказа</name>
+    </settings>
+    <settings>
+        <variable>paymaster_vat_products</variable>
+        <name>НДС для продуктов</name>
+        <options>
+            <name>НДС 18%</name>
+            <value>vat18</value>
+        </options>
+        <options>
+            <name>НДС 10%</name>
+            <value>vat10</value>
+        </options>
+        <options>
+            <name>НДС по формуле 18/118</name>
+            <value>vat118</value>
+        </options>
+        <options>
+            <name>НДС по формуле 10/110</name>
+            <value>vat110</value>
+        </options>
+        <options>
+            <name>НДС 0%</name>
+            <value>vat0</value>
+        </options>
+        <options>
+            <name>Без НДС</name>
+            <value>no_vat</value>
+        </options>
+    </settings>
+    <settings>
+        <variable>paymaster_vat_delivery</variable>
+        <name>НДС для доставки</name>
+        <options>
+            <name>НДС 18%</name>
+            <value>vat18</value>
+        </options>
+        <options>
+            <name>НДС 10%</name>
+            <value>vat10</value>
+        </options>
+        <options>
+            <name>НДС по формуле 18/118</name>
+            <value>vat118</value>
+        </options>
+        <options>
+            <name>НДС по формуле 10/110</name>
+            <value>vat110</value>
+        </options>
+        <options>
+            <name>НДС 0%</name>
+            <value>vat0</value>
+        </options>
+        <options>
+            <name>Без НДС</name>
+            <value>no_vat</value>
+        </options>
+    </settings>
+</module>
