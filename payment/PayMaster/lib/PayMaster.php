@@ -87,23 +87,36 @@ class PayMaster
 
         $simpla = new \Simpla();
 
+	    $order = $simpla->orders->get_order(intval($orderId));
+
+	    $method = $simpla->payment->get_payment_method(intval($order->payment_method_id));
+
+	    if (empty($method))
+		    die;
+
+	    $settings = unserialize($method->settings);
+
+
+	    $this->setSecretKey($settings['secret_key']);
+	    $this->setSignMethod($settings['paymaster_sign_method']);
+
         $amount = number_format($amount,2,'.','');
 
         $fields = array(
+	        'LMI_MERCHANT_ID' => $this->merchantId,
+	        'LMI_PAYMENT_NO' => $orderId,
             'LMI_PAYMENT_AMOUNT' => $amount,
+	        'LMI_CURRENCY' => $this->currency,
             'LMI_PAYMENT_DESC' => $description,
-            'LMI_PAYMENT_NO' => $orderId,
-            'LMI_MERCHANT_ID' => $this->merchantId,
-            'LMI_CURRENCY' => $this->currency,
             'LMI_PAYMENT_NOTIFICATION_URL' => $notify_url,
             'LMI_SUCCESS_URL' => $success_url,
             'LMI_FAILURE_URL' => $fail_url,
             'SIGN' => $this->getSign($this->merchantId, $orderId, $amount, $this->currency, $this->secretKey, $this->signMethod),
         );
 
+
         $order = $simpla->orders->get_order(intval($orderId));
 
-        ;
 
         foreach ($simpla->orders->get_purchases(array('order_id' => intval($orderId))) as $key=>$product) {
             $fields["LMI_SHOPPINGCART.ITEM[{$key}].NAME"] = $product->product_name;
@@ -145,8 +158,8 @@ class PayMaster
                 echo "YES";
                 die;
             } else {
-                $hash = $this->getHash($_POST["LMI_MERCHANT_ID"], $_POST["LMI_PAYMENT_NO"], $_POST["LMI_SYS_PAYMENT_ID"], $_POST["LMI_SYS_PAYMENT_DATE"], $_POST["LMI_PAYMENT_AMOUNT"], $_POST["LMI_CURRENCY"], $_POST["LMI_PAID_AMOUNT"], $_POST["LMI_PAID_CURRENCY"], $_POST["LMI_PAYMENT_SYSTEM"], $_POST["LMI_SIM_MODE"], $this->secretKey, $this->signMethod);
-                $sign = $this->getSign($_POST["LMI_MERCHANT_ID"], $_POST["LMI_PAYMENT_NO"], $_POST["LMI_PAID_AMOUNT"], $_POST["LMI_PAID_CURRENCY"], $this->secretKey, $this->signMethod);
+                $hash = $this->getHash($_POST["LMI_MERCHANT_ID"], $_POST["LMI_PAYMENT_NO"], $_POST["LMI_SYS_PAYMENT_ID"], $_POST["LMI_SYS_PAYMENT_DATE"], $_POST["LMI_PAYMENT_AMOUNT"], $_POST["LMI_CURRENCY"], $_POST["LMI_PAYMENT_AMOUNT"], $_POST["LMI_CURRENCY"], $_POST["LMI_PAYMENT_SYSTEM"], $_POST["LMI_SIM_MODE"], $this->secretKey, $this->signMethod);
+                $sign = $this->getSign($_POST["LMI_MERCHANT_ID"], $_POST["LMI_PAYMENT_NO"], $_POST["LMI_PAYMENT_AMOUNT"], $_POST["LMI_CURRENCY"], $this->secretKey, $this->signMethod);
                 if ($_POST["LMI_HASH"] == $hash) {
                     if ($_POST["SIGN"] == $sign) {
                         return true;

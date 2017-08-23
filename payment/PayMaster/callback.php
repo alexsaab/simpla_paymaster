@@ -1,11 +1,11 @@
 <?php
 
+
 require_once(__DIR__ . '/lib/PayMaster.php');
 
 chdir('../../');
 require_once('api/Simpla.php');
 $simpla = new Simpla();
-
 
 $paymaster = new PayMaster\PayMaster();
 
@@ -16,6 +16,7 @@ if ($order_id === null)
     die;
 
 $order = $simpla->orders->get_order(intval($order_id));
+
 if (empty($order))
     die;
 
@@ -23,6 +24,7 @@ if ($order->paid)
     die;
 
 $method = $simpla->payment->get_payment_method(intval($order->payment_method_id));
+
 if (empty($method))
     die;
 
@@ -31,7 +33,6 @@ $settings = unserialize($method->settings);
 
 $paymaster->setSecretKey($settings['secret_key']);
 $paymaster->setSignMethod($settings['paymaster_sign_method']);
-
 
 if ($paymaster->verify()) {
     if ($amount != $simpla->money->convert($order->total_price, $method->currency_id, false) || $amount <= 0) {
@@ -46,8 +47,33 @@ if ($paymaster->verify()) {
         }
 
     }
+
     $simpla->orders->update_order(intval($order->id), array('paid' => 1));
     $simpla->orders->close(intval($order->id));
     $simpla->notify->email_order_user(intval($order->id));
     $simpla->notify->email_order_admin(intval($order->id));
+}
+
+
+/**
+ * Логирование в файл для отладки, на дурацкой настройке Joomla тут ничего не
+ * работало
+ *
+ * @param $text
+ *
+ *
+ * @since version
+ */
+function logF($text)
+{
+	$f = fopen(__DIR__."/payment.log", "a+");
+	if (is_array($text)) {
+		foreach ($text as $key=>$value) {
+			fwrite($f, date('Y-m-d H:i:s') . " '{$key}' => '{$value}'\r\n");
+		}
+	}
+	else {
+		fwrite($f, date('Y-m-d H:i:s') . " " . $text . "\r\n");
+	}
+	fclose($f);
 }
